@@ -1,0 +1,57 @@
+<html>
+<body onload="detectLocation()">
+<!-- This html must be hosted on a server for navigator.geolocation callbacks to work -->
+
+<div id="status"></div>
+
+<script type="text/javascript">
+function detectLocation()
+{
+  log("detectLocation() starting");
+  if (navigator.geolocation)
+  {
+    log("navigator.geolocation is supported");
+    navigator.geolocation.getCurrentPosition(function (position) {
+    	tampilLokasi(position);
+
+    }, 
+
+
+    function (error){
+	    log("error " + error.code);
+	},
+
+	{ timeout: 30000 });
+  }
+  else
+  {
+    log("navigator.geolocation not supported");
+  }
+}
+
+function tampilLokasi(posisi) {
+    //console.log(posisi);
+    var latitude  = posisi.coords.latitude;
+    var longitude   = posisi.coords.longitude;
+    $.ajax({
+      type  : 'POST',
+      url   : 'function_getaddress.php',
+      data  : 'latitude='+latitude+'&longitude='+longitude,
+      success : function (e) {
+        if (e) {
+          $('#lokasi').html(e);
+          //$('#lat').val(latitude);
+          //$('#long').val(longitude);
+        }else{
+          $('#lokasi').html('Tidak Tersedia');
+        }
+      }
+    })
+  }
+
+function log(msg){
+    document.getElementById("status").innerHTML = new Date() + " :: " + msg + "<br/>" + document.getElementById("status").innerHTML;
+}
+</script>
+</body>
+</html>
